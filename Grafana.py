@@ -1,5 +1,4 @@
 import json
-
 import requests
 
 
@@ -32,7 +31,8 @@ class GrafanaUtils:
         return delete_folder
 
     def Create_Dashboard_by_FolderUID(self, folderuid, dashboardID='null', dashboardUID='null',
-                                      overwrite=True, title='new dashboard'):
+                                      overwrite=True, title='newdashboard', database='flow',
+                                      table_wapl='wapl', table_throughput='throughput', table_rtt='rtt', table_inflight='inflight'):
         Create_Dashboard_by_FolderUID_url = self.host + 'api/dashboards/db'
         data = json.dumps({
             "dashboard": {
@@ -98,8 +98,8 @@ class GrafanaUtils:
                             "overrides": []
                         },
                         "gridPos": {
-                            "h": 9,
-                            "w": 12,
+                            "h": 6,
+                            "w": 10,
                             "x": 0,
                             "y": 0
                         },
@@ -126,7 +126,570 @@ class GrafanaUtils:
                                 "editorMode": "code",
                                 "format": "table",
                                 "rawQuery": True,
-                                "rawSql": "SELECT $__time(captime), inf FROM flow.inflight ",
+                                "rawSql": "SELECT $__time(captime), rwnd FROM " + f'{database}.' + f'{table_wapl}',
+                                "refId": "A",
+                                "sql": {
+                                    "columns": [
+                                        {
+                                            "parameters": [
+                                                {
+                                                    "name": "captime",
+                                                    "type": "functionParameter"
+                                                }
+                                            ],
+                                            "type": "function"
+                                        },
+                                        {
+                                            "parameters": [
+                                                {
+                                                    "name": "rwnd",
+                                                    "type": "functionParameter"
+                                                }
+                                            ],
+                                            "type": "function"
+                                        }
+                                    ],
+                                    "groupBy": [
+                                        {
+                                            "property": {
+                                                "type": "string"
+                                            },
+                                            "type": "groupBy"
+                                        }
+                                    ],
+                                    "limit": 50
+                                },
+                                "table": "wapl"
+                            }
+                        ],
+                        "title": "rwnd(B)",
+                        "type": "timeseries"
+                    },
+                    {
+                        "datasource": {
+                            "type": "mysql",
+                            "uid": "hFYb6NB4k"
+                        },
+                        "fieldConfig": {
+                            "defaults": {
+                                "color": {
+                                    "mode": "palette-classic"
+                                },
+                                "custom": {
+                                    "axisCenteredZero": False,
+                                    "axisColorMode": "text",
+                                    "axisLabel": "",
+                                    "axisPlacement": "auto",
+                                    "barAlignment": 0,
+                                    "drawStyle": "line",
+                                    "fillOpacity": 0,
+                                    "gradientMode": "none",
+                                    "hideFrom": {
+                                        "legend": False,
+                                        "tooltip": False,
+                                        "viz": False
+                                    },
+                                    "lineInterpolation": "linear",
+                                    "lineWidth": 1,
+                                    "pointSize": 5,
+                                    "scaleDistribution": {
+                                        "type": "linear"
+                                    },
+                                    "showPoints": "auto",
+                                    "spanNulls": False,
+                                    "stacking": {
+                                        "group": "A",
+                                        "mode": "none"
+                                    },
+                                    "thresholdsStyle": {
+                                        "mode": "off"
+                                    }
+                                },
+                                "mappings": [],
+                                "thresholds": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "green",
+                                            "value": 'null'
+                                        },
+                                        {
+                                            "color": "red",
+                                            "value": 80
+                                        }
+                                    ]
+                                }
+                            },
+                            "overrides": [
+                                {
+                                    "matcher": {
+                                        "id": "byName",
+                                        "options": "throughput"
+                                    },
+                                    "properties": [
+                                        {
+                                            "id": "color",
+                                            "value": {
+                                                "fixedColor": "#3917d8",
+                                                "mode": "fixed"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "gridPos": {
+                            "h": 12,
+                            "w": 11,
+                            "x": 10,
+                            "y": 0
+                        },
+                        "id": 8,
+                        "options": {
+                            "legend": {
+                                "calcs": [],
+                                "displayMode": "list",
+                                "placement": "bottom",
+                                "showLegend": True
+                            },
+                            "tooltip": {
+                                "mode": "single",
+                                "sort": "none"
+                            }
+                        },
+                        "targets": [
+                            {
+                                "dataset": "flow",
+                                "datasource": {
+                                    "type": "mysql",
+                                    "uid": "hFYb6NB4k"
+                                },
+                                "editorMode": "code",
+                                "format": "table",
+                                "rawQuery": True,
+                                "rawSql": "SELECT $__time(captime), throughput FROM " + f'{database}.' + f'{table_throughput}',
+                                "refId": "A",
+                                "sql": {
+                                    "columns": [
+                                        {
+                                            "parameters": [
+                                                {
+                                                    "name": "captime",
+                                                    "type": "functionParameter"
+                                                }
+                                            ],
+                                            "type": "function"
+                                        },
+                                        {
+                                            "parameters": [
+                                                {
+                                                    "name": "throughput",
+                                                    "type": "functionParameter"
+                                                }
+                                            ],
+                                            "type": "function"
+                                        }
+                                    ],
+                                    "groupBy": [
+                                        {
+                                            "property": {
+                                                "type": "string"
+                                            },
+                                            "type": "groupBy"
+                                        }
+                                    ],
+                                    "limit": 50
+                                },
+                                "table": "throughput"
+                            }
+                        ],
+                        "title": "throughput(B/0.1s)",
+                        "type": "timeseries"
+                    },
+                    {
+                        "datasource": {
+                            "type": "mysql",
+                            "uid": "hFYb6NB4k"
+                        },
+                        "fieldConfig": {
+                            "defaults": {
+                                "color": {
+                                    "mode": "palette-classic"
+                                },
+                                "custom": {
+                                    "axisCenteredZero": False,
+                                    "axisColorMode": "text",
+                                    "axisLabel": "",
+                                    "axisPlacement": "auto",
+                                    "barAlignment": 0,
+                                    "drawStyle": "line",
+                                    "fillOpacity": 0,
+                                    "gradientMode": "none",
+                                    "hideFrom": {
+                                        "legend": False,
+                                        "tooltip": False,
+                                        "viz": False
+                                    },
+                                    "lineInterpolation": "linear",
+                                    "lineWidth": 1,
+                                    "pointSize": 5,
+                                    "scaleDistribution": {
+                                        "type": "linear"
+                                    },
+                                    "showPoints": "auto",
+                                    "spanNulls": False,
+                                    "stacking": {
+                                        "group": "A",
+                                        "mode": "none"
+                                    },
+                                    "thresholdsStyle": {
+                                        "mode": "off"
+                                    }
+                                },
+                                "mappings": [],
+                                "thresholds": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "green",
+                                            "value": 'null'
+                                        },
+                                        {
+                                            "color": "red",
+                                            "value": 80
+                                        }
+                                    ]
+                                }
+                            },
+                            "overrides": [
+                                {
+                                    "matcher": {
+                                        "id": "byName",
+                                        "options": "pktlen"
+                                    },
+                                    "properties": [
+                                        {
+                                            "id": "color",
+                                            "value": {
+                                                "mode": "continuous-GrYlRd"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "gridPos": {
+                            "h": 6,
+                            "w": 10,
+                            "x": 0,
+                            "y": 6
+                        },
+                        "id": 4,
+                        "options": {
+                            "legend": {
+                                "calcs": [],
+                                "displayMode": "list",
+                                "placement": "bottom",
+                                "showLegend": True
+                            },
+                            "tooltip": {
+                                "mode": "single",
+                                "sort": "none"
+                            }
+                        },
+                        "targets": [
+                            {
+                                "dataset": "flow",
+                                "datasource": {
+                                    "type": "mysql",
+                                    "uid": "hFYb6NB4k"
+                                },
+                                "editorMode": "code",
+                                "format": "table",
+                                "rawQuery": True,
+                                "rawSql": "SELECT $__time(captime), pktlen FROM " + f'{database}.' + f'{table_wapl}',
+                                "refId": "A",
+                                "sql": {
+                                    "columns": [
+                                        {
+                                            "parameters": [
+                                                {
+                                                    "name": "captime",
+                                                    "type": "functionParameter"
+                                                }
+                                            ],
+                                            "type": "function"
+                                        },
+                                        {
+                                            "parameters": [
+                                                {
+                                                    "name": "pktlen",
+                                                    "type": "functionParameter"
+                                                }
+                                            ],
+                                            "type": "function"
+                                        }
+                                    ],
+                                    "groupBy": [
+                                        {
+                                            "property": {
+                                                "type": "string"
+                                            },
+                                            "type": "groupBy"
+                                        }
+                                    ],
+                                    "limit": 50
+                                },
+                                "table": "wapl"
+                            }
+                        ],
+                        "title": "pktlen(B)",
+                        "type": "timeseries"
+                    },
+                    {
+                        "datasource": {
+                            "type": "mysql",
+                            "uid": "hFYb6NB4k"
+                        },
+                        "fieldConfig": {
+                            "defaults": {
+                                "color": {
+                                    "mode": "palette-classic"
+                                },
+                                "custom": {
+                                    "axisCenteredZero": False,
+                                    "axisColorMode": "text",
+                                    "axisLabel": "",
+                                    "axisPlacement": "auto",
+                                    "barAlignment": 0,
+                                    "drawStyle": "line",
+                                    "fillOpacity": 0,
+                                    "gradientMode": "none",
+                                    "hideFrom": {
+                                        "legend": False,
+                                        "tooltip": False,
+                                        "viz": False
+                                    },
+                                    "lineInterpolation": "linear",
+                                    "lineWidth": 1,
+                                    "pointSize": 5,
+                                    "scaleDistribution": {
+                                        "type": "linear"
+                                    },
+                                    "showPoints": "auto",
+                                    "spanNulls": False,
+                                    "stacking": {
+                                        "group": "A",
+                                        "mode": "none"
+                                    },
+                                    "thresholdsStyle": {
+                                        "mode": "off"
+                                    }
+                                },
+                                "mappings": [],
+                                "thresholds": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "green",
+                                            "value": 'null'
+                                        },
+                                        {
+                                            "color": "red",
+                                            "value": 80
+                                        }
+                                    ]
+                                }
+                            },
+                            "overrides": [
+                                {
+                                    "matcher": {
+                                        "id": "byName",
+                                        "options": "rtt"
+                                    },
+                                    "properties": [
+                                        {
+                                            "id": "color",
+                                            "value": {
+                                                "mode": "fixed",
+                                                "seriesBy": "last"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "gridPos": {
+                            "h": 8,
+                            "w": 10,
+                            "x": 0,
+                            "y": 12
+                        },
+                        "id": 6,
+                        "options": {
+                            "legend": {
+                                "calcs": [],
+                                "displayMode": "list",
+                                "placement": "bottom",
+                                "showLegend": True
+                            },
+                            "tooltip": {
+                                "mode": "single",
+                                "sort": "none"
+                            }
+                        },
+                        "targets": [
+                            {
+                                "dataset": "flow",
+                                "datasource": {
+                                    "type": "mysql",
+                                    "uid": "hFYb6NB4k"
+                                },
+                                "editorMode": "code",
+                                "format": "table",
+                                "rawQuery": True,
+                                "rawSql": "SELECT $__time(captime), rtt FROM " + f'{database}.' + f'{table_rtt}',
+                                "refId": "A",
+                                "sql": {
+                                    "columns": [
+                                        {
+                                            "parameters": [
+                                                {
+                                                    "name": "captime",
+                                                    "type": "functionParameter"
+                                                }
+                                            ],
+                                            "type": "function"
+                                        },
+                                        {
+                                            "parameters": [
+                                                {
+                                                    "name": "rtt",
+                                                    "type": "functionParameter"
+                                                }
+                                            ],
+                                            "type": "function"
+                                        }
+                                    ],
+                                    "groupBy": [
+                                        {
+                                            "property": {
+                                                "type": "string"
+                                            },
+                                            "type": "groupBy"
+                                        }
+                                    ],
+                                    "limit": 50
+                                },
+                                "table": "rtt"
+                            }
+                        ],
+                        "title": "rtt(ms)",
+                        "type": "timeseries"
+                    },
+                    {
+                        "datasource": {
+                            "type": "mysql",
+                            "uid": "hFYb6NB4k"
+                        },
+                        "fieldConfig": {
+                            "defaults": {
+                                "color": {
+                                    "mode": "palette-classic"
+                                },
+                                "custom": {
+                                    "axisCenteredZero": False,
+                                    "axisColorMode": "text",
+                                    "axisLabel": "",
+                                    "axisPlacement": "auto",
+                                    "barAlignment": 0,
+                                    "drawStyle": "line",
+                                    "fillOpacity": 0,
+                                    "gradientMode": "none",
+                                    "hideFrom": {
+                                        "legend": False,
+                                        "tooltip": False,
+                                        "viz": False
+                                    },
+                                    "lineInterpolation": "linear",
+                                    "lineWidth": 1,
+                                    "pointSize": 5,
+                                    "scaleDistribution": {
+                                        "type": "linear"
+                                    },
+                                    "showPoints": "auto",
+                                    "spanNulls": False,
+                                    "stacking": {
+                                        "group": "A",
+                                        "mode": "none"
+                                    },
+                                    "thresholdsStyle": {
+                                        "mode": "off"
+                                    }
+                                },
+                                "mappings": [],
+                                "thresholds": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "green",
+                                            "value": 'null'
+                                        },
+                                        {
+                                            "color": "red",
+                                            "value": 80
+                                        }
+                                    ]
+                                }
+                            },
+                            "overrides": [
+                                {
+                                    "matcher": {
+                                        "id": "byName",
+                                        "options": "inf"
+                                    },
+                                    "properties": [
+                                        {
+                                            "id": "color",
+                                            "value": {
+                                                "fixedColor": "#e8d617",
+                                                "mode": "fixed"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "gridPos": {
+                            "h": 8,
+                            "w": 11,
+                            "x": 10,
+                            "y": 12
+                        },
+                        "id": 10,
+                        "options": {
+                            "legend": {
+                                "calcs": [],
+                                "displayMode": "list",
+                                "placement": "bottom",
+                                "showLegend": True
+                            },
+                            "tooltip": {
+                                "mode": "single",
+                                "sort": "none"
+                            }
+                        },
+                        "targets": [
+                            {
+                                "dataset": "flow",
+                                "datasource": {
+                                    "type": "mysql",
+                                    "uid": "hFYb6NB4k"
+                                },
+                                "editorMode": "code",
+                                "format": "table",
+                                "rawQuery": True,
+                                "rawSql": "SELECT $__time(captime), inf FROM " + f'{database}.' + f'{table_inflight}',
                                 "refId": "A",
                                 "sql": {
                                     "columns": [
@@ -162,7 +725,7 @@ class GrafanaUtils:
                                 "table": "inflight"
                             }
                         ],
-                        "title": "123",
+                        "title": "inflight(B)",
                         "type": "timeseries"
                     }
                 ],
@@ -180,4 +743,3 @@ class GrafanaUtils:
         print(data)
         result = requests.post(url=Create_Dashboard_by_FolderUID_url, data=data, headers=self.Headers)
         return result
-
