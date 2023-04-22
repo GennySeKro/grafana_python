@@ -30,9 +30,15 @@ class GrafanaUtils:
         delete_folder = requests.delete(url=delete_folder_url, headers=self.Headers)
         return delete_folder
 
+    def Delete_Dsahboard_By_UID(self, uid):
+        delete_dashboard_url = self.host + 'api/dashboards/uid/' + uid
+        delete_dashboard = requests.delete(url=delete_dashboard_url, headers=self.Headers)
+        return delete_dashboard
+
     def Create_Dashboard_by_FolderUID(self, folderuid, dashboardID='null', dashboardUID='null',
                                       overwrite=True, title='newdashboard', database='flow',
-                                      table_wapl='wapl', table_throughput='throughput', table_rtt='rtt', table_inflight='inflight'):
+                                      table_wapl='wapl', table_throughput='throughput', table_rtt='rtt',
+                                      table_inflight='inflight'):
         Create_Dashboard_by_FolderUID_url = self.host + 'api/dashboards/db'
         data = json.dumps({
             "dashboard": {
