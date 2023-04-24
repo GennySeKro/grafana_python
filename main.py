@@ -1,7 +1,7 @@
 import Grafana
 
-Host = "http://101.43.161.79:3000/"
-api_key = "eyJrIjoibk4zcm5HTWI2aGlqbkN2R1lHNlhETlFEWnZVRlFLcHciLCJuIjoidGVzdCIsImlkIjoxfQ=="
+# Host = "服务器地址"
+# api_key = "鉴权令牌"
 
 # result = Grafana.GrafanaUtils(Host, api_key)
 # print(result.Get_Folders_List())

@@ -4,6 +4,11 @@ import requests
 
 class GrafanaUtils:
     def __init__(self, host, api_key):
+        """
+
+        :param host: Grafana服务地址
+        :param api_key: 申请Grafana鉴权
+        """
         self.host = host
         self.api_key = api_key
         self.Headers = {'Authorization': f"Bearer {api_key}",
@@ -11,6 +16,10 @@ class GrafanaUtils:
                         'Accept': 'application/json'}
 
     def Get_Folders_List(self):
+        """
+        获得文件夹列表
+        :return:
+        """
         get_folders_list_url = self.host + "api/folders"
         foders_list = requests.get(get_folders_list_url, headers=self.Headers)
         return foders_list.json()
